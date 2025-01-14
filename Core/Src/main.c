@@ -14,7 +14,8 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */
+  */ 
+ #define GPS
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -24,7 +25,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#ifdef IMU
 #include "mpu6050.h"
+#endif
+#ifdef GPS
+#include "gps_neo6.h"
+#endif
 #include <string.h>
 #include <stdio.h>
 /* USER CODE END Includes */
@@ -47,9 +53,17 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+#ifdef IMU 
 int16_t acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
 float ax, ay, az, gx, gy, gz, temperature, roll, pitch;
 uint8_t buffer[128];
+#endif
+
+#ifdef GPS
+uint8_t Message[64];
+uint8_t MessageLength;
+#endif
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,24 +113,84 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  #ifdef IMU 
   MPU6050_Init(&hi2c1);
   HAL_Delay(500);
+  #endif
+
+  #ifdef GPS
+  NEO6_Init(&GpsState, &huart1);
+  HAL_Delay(500);
+  uint32_t Timer = HAL_GetTick();
+  #endif
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {    
+  { 
+    #ifdef IMU   
     MPU6050_GetAccelerometerScaled(&ax, &ay, &az);
 	  MPU6050_GetGyroscopeScaled(&gx, &gy, &gz);
     memset(buffer, 0, 128);
 	  sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rGYR: X: %.2f Y:%.2f Z:%.2f\n\r", ax, ay, az, gx, gy, gz);
 	  UART2_SendString((char*)buffer);
+    HAL_Delay(200);
+    #endif
 
-	  HAL_Delay(300);
+    #ifdef GPS
+    NEO6_Task(&GpsState);
+
+	  if((HAL_GetTick() - Timer) > 1000)
+	  {
+		  MessageLength = sprintf((char*)Message, "\033[2J\033[;H"); // Clear terminal and home cursor
+		  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+		  if(NEO6_IsFix(&GpsState))
+		  {
+			  MessageLength = sprintf((char*)Message, "UTC Time: %02d:%02d:%02d\n\r", GpsState.Hour, GpsState.Minute, GpsState.Second);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Date: %02d.%02d.20%02d\n\r", GpsState.Day, GpsState.Month, GpsState.Year);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Latitude: %.2f %c\n\r", GpsState.Latitude, GpsState.LatitudeDirection);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Longitude: %.2f %c\n\r", GpsState.Longitude, GpsState.LongitudeDirection);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Altitude: %.2f m above sea level\n\r", GpsState.Altitude);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Speed: %.2f knots, %f km/h\n\r", GpsState.SpeedKnots, GpsState.SpeedKilometers);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Satelites: %d\n\r", GpsState.SatelitesNumber);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Dilution of precision: %.2f\n\r", GpsState.Dop);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Horizontal dilution of precision: %.2f\n\r", GpsState.Hdop);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+
+			  MessageLength = sprintf((char*)Message, "Vertical dilution of precision: %.2f\n\r", GpsState.Vdop);
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+		  }
+		  else
+		  {
+			  MessageLength = sprintf((char*)Message, "No Fix\n\r");
+			  HAL_UART_Transmit(&huart2, Message, MessageLength, 1000);
+		  }
+
+		  Timer = HAL_GetTick();
+	  }
+    #endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -172,7 +246,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == GpsState.neo6_huart)
+	{
+		NEO6_ReceiveUartChar(&GpsState);
+	}
+}
 /* USER CODE END 4 */
 
 /**
