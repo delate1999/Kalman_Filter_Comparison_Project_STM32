@@ -45,6 +45,10 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
 )
 
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    "-u_printf_float"
+)
+
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here

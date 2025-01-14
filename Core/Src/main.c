@@ -102,6 +102,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   MPU6050_Init(&hi2c1);
+  HAL_Delay(500);
 
   /* USER CODE END 2 */
 
@@ -111,6 +112,9 @@ int main(void)
   {    
     MPU6050_GetAccelerometerScaled(&ax, &ay, &az);
 	  MPU6050_GetGyroscopeScaled(&gx, &gy, &gz);
+    memset(buffer, 0, 128);
+	  sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rGYR: X: %.2f Y:%.2f Z:%.2f\n\r", ax, ay, az, gx, gy, gz);
+	  UART2_SendString((char*)buffer);
 
 	  HAL_Delay(300);
     /* USER CODE END WHILE */

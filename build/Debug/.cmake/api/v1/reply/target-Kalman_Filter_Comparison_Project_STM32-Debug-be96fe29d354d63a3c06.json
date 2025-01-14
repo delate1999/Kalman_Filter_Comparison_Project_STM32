@@ -11,6 +11,7 @@
 		"commands" : 
 		[
 			"add_executable",
+			"target_link_options",
 			"target_link_libraries",
 			"target_sources"
 		],
@@ -32,13 +33,19 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 65,
+				"line" : 48,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 49,
+				"line" : 69,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 53,
 				"parent" : 0
 			}
 		]
@@ -55,38 +62,38 @@
 			"defines" : 
 			[
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"define" : "DEBUG"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"define" : "STM32F446xx"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"define" : "USE_HAL_DRIVER"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Core/Inc"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/STM32F4xx_HAL_Driver/Inc"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/CMSIS/Device/ST/STM32F4xx/Include"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/CMSIS/Include"
 				}
 			],
@@ -139,38 +146,38 @@
 			"defines" : 
 			[
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"define" : "DEBUG"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"define" : "STM32F446xx"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"define" : "USE_HAL_DRIVER"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Core/Inc"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/STM32F4xx_HAL_Driver/Inc"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/CMSIS/Device/ST/STM32F4xx/Include"
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"path" : "C:/Users/matko/UCZELNIA/Magister/Repozytorium/Kalman_Filter_Comparison_Project/Kalman_Filter_Comparison_Project_STM32/cmake/stm32cubemx/../../Drivers/CMSIS/Include"
 				}
 			],
@@ -192,6 +199,11 @@
 			},
 			{
 				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-u_printf_float",
 				"role" : "flags"
 			}
 		],
@@ -249,163 +261,163 @@
 	"sources" : 
 	[
 		{
-			"backtrace" : 3,
+			"backtrace" : 4,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/mpu6050.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/main.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/gpio.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/i2c.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/usart.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/stm32f4xx_it.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/stm32f4xx_hal_msp.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/system_stm32f4xx.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/sysmem.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/syscalls.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 2,
+			"backtrace" : 3,
 			"compileGroupIndex" : 1,
 			"path" : "startup_stm32f446xx.s",
 			"sourceGroupIndex" : 1
