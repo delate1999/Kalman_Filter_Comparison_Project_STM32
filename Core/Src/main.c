@@ -15,7 +15,7 @@
   *
   ******************************************************************************
   */ 
- #define GPS
+ #define IMU
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -28,9 +28,13 @@
 #ifdef IMU
 #include "mpu6050.h"
 #endif
+
 #ifdef GPS
 #include "gps_neo6.h"
 #endif
+
+#include "data_gps.h"
+#include "data_imu.h"
 #include <string.h>
 #include <stdio.h>
 /* USER CODE END Includes */
@@ -245,6 +249,7 @@ void SystemClock_Config(void)
   }
 }
 
+#ifdef GPS
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -253,6 +258,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		NEO6_ReceiveUartChar(&GpsState);
 	}
 }
+#endif
 /* USER CODE END 4 */
 
 /**
