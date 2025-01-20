@@ -1,27 +1,11 @@
-/*
- * mpu6050.h
- *
- *  Created on: 08.10.2018
- *  	License: MIT
- *      Author: Mateusz Salamon
- *      Based on:
- *      	 - MPU-6000 and MPU-6050 Product Specification Revision 3.4
- *      	 - MPU-6000 and MPU-6050 Register Map and Descriptions Revision 4.2
- *      	 - i2cdevlib by Jeff Rowberg on MIT license
- *      	 - SparkFun MPU-9250 Digital Motion Processor (DMP) Arduino Library on MIT License
- *
- *		www.msalamon.pl
- *		mateusz@msalamon.pl
- *
- *	Website: https://msalamon.pl/6-stopni-swobody-z-mpu6050-na-stm32/
- *	GitHub: https://github.com/lamik/MPU6050_STM32_HAL
- */
-
 #ifndef MPU6050_H_
 #define MPU6050_H_
 
 #define MPU6050_ADDRESS 0xD0	// AD0 low
 //#define MPU6050_ADDRESS 0xD1	// AD0 high
+#define AK8963_ADDRESS 0x0C
+
+#define PI 3.14159265
 
 //
 //	Registers addresses
@@ -127,7 +111,7 @@
 #define MPU6050_RA_WHO_AM_I         0x75
 
 //
-//	Registers 13 to 16 – Self Test Registers
+//	Registers 13 to 16 ï¿½ Self Test Registers
 //	SELF_TEST_X, SELF_TEST_Y, SELF_TEST_Z, and SELF_TEST_A
 //
 #define MPU6050_SELF_TEST_XA_1_BIT     0x07
@@ -151,7 +135,7 @@
 #define MPU6050_SELF_TEST_ZG_1_LENGTH  0x05
 
 //
-//	Register 26 – Configuration
+//	Register 26 ï¿½ Configuration
 //	CONFIG
 //
 #define MPU6050_CFG_EXT_SYNC_SET_BIT    5
@@ -177,7 +161,7 @@
 #define MPU6050_DLPF_BW_5           0x06
 
 //
-//	Register 27 – Gyroscope Configuration
+//	Register 27 ï¿½ Gyroscope Configuration
 //	GYRO_CONFIG
 //
 #define MPU6050_GCONFIG_FS_SEL_BIT      4
@@ -189,7 +173,7 @@
 #define MPU6050_GYRO_FS_2000        0x03
 
 //
-//	Register 28 – Accelerometer Configuration
+//	Register 28 ï¿½ Accelerometer Configuration
 //	ACCEL_CONFIG
 //
 #define MPU6050_ACONFIG_XA_ST_BIT           7
@@ -216,7 +200,7 @@
 #define MPU6050_DHPF_HOLD           0x07
 
 //
-//	Register 35 – FIFO Enable
+//	Register 35 ï¿½ FIFO Enable
 //	FIFO_EN
 //
 #define MPU6050_TEMP_FIFO_EN_BIT    7
@@ -229,7 +213,7 @@
 #define MPU6050_SLV0_FIFO_EN_BIT    0
 
 //
-//	Register 36 – I2C Master Control
+//	Register 36 ï¿½ I2C Master Control
 //	I2C_MST_CTRL
 //
 #define MPU6050_MULT_MST_EN_BIT     7
@@ -257,16 +241,16 @@
 #define MPU6050_CLOCK_DIV_258       0x8
 
 //
-//	Registers 37 to 39 – I2C Slave 0 Control
+//	Registers 37 to 39 ï¿½ I2C Slave 0 Control
 //	I2C_SLV0_ADDR, I2C_SLV0_REG, and I2C_SLV0_CTRL
 //
-//	Registers 40 to 42 – I2C Slave 1 Control
+//	Registers 40 to 42 ï¿½ I2C Slave 1 Control
 //	I2C_SLV1_ADDR, I2C_SLV1_REG, and I2C_SLV1_CTRL
 //
-//	Registers 43 to 45 – I2C Slave 2 Control
+//	Registers 43 to 45 ï¿½ I2C Slave 2 Control
 //	I2C_SLV2_ADDR, I2C_SLV2_REG, and I2C_SLV2_CTRL
 //
-//	Registers 46 to 48 – I2C Slave 3 Control
+//	Registers 46 to 48 ï¿½ I2C Slave 3 Control
 //	I2C_SLV3_ADDR, I2C_SLV3_REG, and I2C_SLV3_CTRL
 //
 //	Same structure for these registers
@@ -282,7 +266,7 @@
 #define MPU6050_I2C_SLV_LEN_LENGTH  4
 
 //
-//	Registers 49 to 53 – I2C Slave 4 Control
+//	Registers 49 to 53 ï¿½ I2C Slave 4 Control
 //	I2C_SLV4_ADDR, I2C_SLV4_REG, I2C_SLV4_DO, I2C_SLV4_CTRL, and I2C_SLV4_DI
 //
 #define MPU6050_I2C_SLV4_RW_BIT         7
@@ -295,7 +279,7 @@
 #define MPU6050_I2C_SLV4_MST_DLY_LENGTH 5
 
 //
-//	Register 54 – I2C Master Status
+//	Register 54 ï¿½ I2C Master Status
 //	I2C_MST_STATUS
 //
 #define MPU6050_MST_PASS_THROUGH_BIT    7
@@ -308,7 +292,7 @@
 #define MPU6050_MST_I2C_SLV0_NACK_BIT   0
 
 //
-//	Register 55 – INT Pin / Bypass Enable Configuration
+//	Register 55 ï¿½ INT Pin / Bypass Enable Configuration
 //	INT_PIN_CFG
 //
 #define MPU6050_INTCFG_INT_LEVEL_BIT        7
@@ -332,10 +316,10 @@
 #define MPU6050_INTCLEAR_ANYREAD    0x01
 
 //
-//	Register 56 – Interrupt Enable
+//	Register 56 ï¿½ Interrupt Enable
 //	INT_ENABLE
 //
-//	Register 58 – Interrupt Status
+//	Register 58 ï¿½ Interrupt Status
 //	INT_STATUS
 //
 
@@ -361,7 +345,7 @@
 #define MPU6050_MOTION_MOT_ZRMOT_BIT    0
 
 //
-//	Register 103 – I2C Master Delay Control
+//	Register 103 ï¿½ I2C Master Delay Control
 //	I2C_MST_DELAY_CTR
 //
 #define MPU6050_DELAYCTRL_DELAY_ES_SHADOW_BIT   7
@@ -372,7 +356,7 @@
 #define MPU6050_DELAYCTRL_I2C_SLV0_DLY_EN_BIT   0
 
 //
-//	Register 104 – Signal Path Reset
+//	Register 104 ï¿½ Signal Path Reset
 //	SIGNAL_PATH_RESE
 //
 #define MPU6050_PATHRESET_GYRO_RESET_BIT    2
@@ -401,7 +385,7 @@
 #define MPU6050_NO_DELAY	0b00
 
 //
-//	Register 106 – User Control
+//	Register 106 ï¿½ User Control
 //	USER_CTRL
 //
 #define MPU6050_USERCTRL_FIFO_EN_BIT            6
@@ -412,7 +396,7 @@
 #define MPU6050_USERCTRL_SIG_COND_RESET_BIT     0
 
 //
-//	Register 107 – Power Management 1
+//	Register 107 ï¿½ Power Management 1
 //	PWR_MGMT_1
 //
 #define MPU6050_PWR1_DEVICE_RESET_BIT   7
@@ -431,7 +415,7 @@
 #define MPU6050_CLOCK_KEEP_RESET        0x07
 
 //
-//	Register 108 – Power Management 2
+//	Register 108 ï¿½ Power Management 2
 //	PWR_MGMT_2
 //
 #define MPU6050_PWR2_LP_WAKE_CTRL_BIT       7
@@ -449,16 +433,47 @@
 #define MPU6050_WAKE_FREQ_40        0x3
 
 //
-//	Register 117 – Who Am I
+//	Register 117 ï¿½ Who Am I
 //	WHO_AM_I
 //
 #define MPU6050_WHO_AM_I_BIT        6
 #define MPU6050_WHO_AM_I_LENGTH     6
 
+/*==================*/
+/* AK8963 registers */
+/*==================*/
+#define	AK8963_WIA 0x0
+#define	AK8963_INFO 0x1
+#define	AK8963_ST1 0x2
+#define	AK8963_HXL 0x3
+#define	AK8963_HXH 0x4
+#define	AK8963_HYL 0x5
+#define	AK8963_HYH 0x6
+#define	AK8963_HZL 0x7
+#define	AK8963_HZH 0x8
+#define	AK8963_ST2 0x9
+#define	AK8963_CNTL 0xA
+#define	AK8963_RSV 0xB
+#define	AK8963_ASTC 0xC
+#define	AK8963_TS1 0xD
+#define	AK8963_TS2 0xE
+#define	AK8963_I2CDIS 0xF
+#define	AK8963_ASAX 0x10
+#define	AK8963_ASAY 0x11
+#define	AK8963_ASAZ 0x12
+
+/*=================*/
+/*==== VALUES =====*/
+/*=================*/
+
+#define	AK8963_CNTL_MODE_POWER_DOWN  0x00
+#define	AK8963_CNTL_MODE_FUSE_READ  0x1F
+#define	AK8963_CNTL_MODE_CONT_MODE_2 0x16
+
 //***********************************//
 //			FUNCTIONS				 //
 //***********************************//
-void MPU6050_Init(I2C_HandleTypeDef *hi2c);
+void MPU6050_Init(I2C_HandleTypeDef *hi2c); 
 uint8_t MPU6050_GetDeviceID();
 
 //
@@ -507,6 +522,9 @@ void MPU6050_GetGyroscopeRAW(int16_t* x, int16_t* y, int16_t* z);
 void MPU6050_GetGyroscopeScaled(float* x, float* y, float* z);
 
 void MPU6050_GetRollPitch(float* Roll, float* Pitch);
+
+float AK9863_ComputeCompassHeading(void);
+void AK8963_GetMagnetometerScaled(float *mag_x, float *mag_y, float *mag_z);
 
 //
 //	Setting INT pin

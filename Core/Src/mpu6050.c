@@ -1,22 +1,3 @@
-/*
- * mpu6050.c
- *
- *  Created on: 08.10.2018
- *  	License: MIT
- *      Author: Mateusz Salamon
- *      Based on:
- *      	 - MPU-6000 and MPU-6050 Product Specification Revision 3.4
- *      	 - MPU-6000 and MPU-6050 Register Map and Descriptions Revision 4.2
- *      	 - i2cdevlib by Jeff Rowberg on MIT license
- *      	 - SparkFun MPU-9250 Digital Motion Processor (DMP) Arduino Library on MIT License
- *
- *		www.msalamon.pl
- *		mateusz@msalamon.pl
- *
- *	Website: https://msalamon.pl/6-stopni-swobody-z-mpu6050-na-stm32/
- *	GitHub: https://github.com/lamik/MPU6050_STM32_HAL
- */
-
 #include "stm32f4xx_hal.h"
 #include "i2c.h"
 
@@ -28,6 +9,10 @@
 I2C_HandleTypeDef *i2c;
 float Acc_Scale;
 float Gyr_Scale;
+
+float Mag_X_Scale;
+float Mag_Y_Scale;
+float Mag_Z_Scale;
 
 //
 // CONFIG
@@ -287,6 +272,56 @@ void MPU6050_GetRollPitch(float* Roll, float* Pitch)
 	*Pitch = -(atan2(acc_x, sqrt(acc_y*acc_y + acc_z*acc_z))*180.0)/M_PI;
 }
 
+void AK8963_GetMagnetometerScaled(float *mag_x, float *mag_y, float *mag_z){
+	int16_t temp_value = 0; 
+	uint8_t tmp[6];
+	HAL_I2C_Mem_Read(i2c, AK8963_ADDRESS, AK8963_HXL, 1, tmp, 6, I2C_TIMEOUT);
+	temp_value = (((int16_t)tmp[1]) << 8) | tmp[0];
+	*mag_x = Mag_X_Scale * (float)temp_value;
+	temp_value = (((int16_t)tmp[3]) << 8) | tmp[2];
+	*mag_y = Mag_Y_Scale * (float)temp_value;
+	temp_value = (((int16_t)tmp[5]) << 8) | tmp[4];
+	*mag_z = Mag_Z_Scale * (float)temp_value;
+
+}
+
+float AK9863_ComputeCompassHeading(void)
+{
+	float mag_x = 0;
+	float mag_y = 0;
+	float mag_z = 0;
+	float heading = 0; 
+	AK8963_GetMagnetometerScaled(&mag_x, &mag_y, &mag_z);
+	if (mag_y == 0)
+		heading = (mag_x < 0) ? PI : 0;
+	else
+		heading = atan2(mag_x, mag_y);
+
+	if (heading > PI) heading -= (2 * PI);
+	else if (heading < -PI) heading += (2 * PI);
+	else if (heading < 0) heading += 2 * PI;
+
+	heading *= 180.0 / PI;
+
+	return heading;
+}
+
+void AK9863_SetMode(uint8_t mode){
+	uint8_t tmp = mode;
+	HAL_I2C_Mem_Write(i2c, AK8963_ADDRESS, AK8963_CNTL, 1, &tmp, 1, I2C_TIMEOUT);
+}
+
+void AK8963_ReadAdjustementValues(void){
+	AK9863_SetMode(AK8963_CNTL_MODE_FUSE_READ);
+	HAL_Delay(500);
+	uint8_t temp_buffer[3];
+	HAL_I2C_Mem_Read(i2c, AK8963_ADDRESS, AK8963_ASAX, 1, temp_buffer, 3, I2C_TIMEOUT);
+
+	Mag_X_Scale = (temp_buffer[0]-128)*0.5/128+1;
+	Mag_Y_Scale = (temp_buffer[1]-128)*0.5/128+1;
+	Mag_Z_Scale = (temp_buffer[2]-128)*0.5/128+1;
+}
+
 //
 //	Setting INT pin
 //
@@ -430,6 +465,13 @@ void MPU6050_SetFreeFallDetectionDuration(uint8_t Duration)
 	HAL_I2C_Mem_Write(i2c, MPU6050_ADDRESS, MPU6050_RA_FF_DUR, 1, &Duration, 1, I2C_TIMEOUT);
 }
 
+void MPU6050_SetMultiplex(void){
+	uint8_t tmp = 0x00;
+	HAL_I2C_Mem_Write(i2c, MPU6050_ADDRESS, MPU6050_RA_USER_CTRL, 1, &tmp, 1, I2C_TIMEOUT);
+	tmp = 0b00000010; 
+	HAL_I2C_Mem_Write(i2c, MPU6050_ADDRESS, MPU6050_RA_INT_PIN_CFG, 1, &tmp, 1, I2C_TIMEOUT);
+}
+
 //
 //	Initialization
 //
@@ -442,5 +484,9 @@ void MPU6050_Init(I2C_HandleTypeDef *hi2c)
     MPU6050_SetDlpf(MPU6050_DLPF_BW_20);
     MPU6050_SetFullScaleGyroRange(MPU6050_GYRO_FS_250);
     MPU6050_SetFullScaleAccelRange(MPU6050_ACCEL_FS_2);
-
+	MPU6050_SetMultiplex();
+	AK8963_ReadAdjustementValues();
+	AK9863_SetMode(AK8963_CNTL_MODE_POWER_DOWN);
+	HAL_Delay(1000);
+	AK9863_SetMode(AK8963_CNTL_MODE_CONT_MODE_2);
 }

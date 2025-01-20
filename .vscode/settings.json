@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "compare": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "mpu9250-dmp.h": "c"
     }
 }

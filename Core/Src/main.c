@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #ifdef IMU
 #include "mpu6050.h"
+#include "MPU9250-DMP.h"
 #endif
 
 #ifdef GPS
@@ -58,8 +59,9 @@
 
 /* USER CODE BEGIN PV */
 #ifdef IMU 
-int16_t acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
-float ax, ay, az, gx, gy, gz, temperature, roll, pitch;
+float acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
+//float ax, ay, az, gx, gy, gz, temperature, roll, pitch;
+float mag_x, mag_y, mag_z;
 uint8_t buffer[128];
 #endif
 
@@ -121,7 +123,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   #ifdef IMU 
-  MPU6050_Init(&hi2c1);
+  MPU9250_begin();
+  MPU9250_setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
+  //MPU6050_Init(&hi2c1);
   HAL_Delay(500);
   #endif
 
@@ -138,11 +142,22 @@ int main(void)
   while (1)
   { 
     #ifdef IMU   
-    MPU6050_GetAccelerometerScaled(&ax, &ay, &az);
-	  MPU6050_GetGyroscopeScaled(&gx, &gy, &gz);
-    memset(buffer, 0, 128);
-	  sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rGYR: X: %.2f Y:%.2f Z:%.2f\n\r", ax, ay, az, gx, gy, gz);
-	  UART2_SendString((char*)buffer);
+    //MPU6050_GetAccelerometerScaled(&ax, &ay, &az);
+	  //MPU6050_GetGyroscopeScaled(&gx, &gy, &gz);
+    //AK8963_GetMagnetometerScaled(&mag_x, &mag_y, &mag_z);
+    if(MPU9250_dataReady()){
+      MPU9250_updateCompass();
+      MPU9250_updateAccel();
+      MPU9250_updateGyro();
+      acc_x = MPU9250_calcAccel(ax);
+      acc_y = MPU9250_calcAccel(ay);
+      acc_z = MPU9250_calcAccel(az);
+      heading = MPU9250_computeCompassHeading();
+      memset(buffer, 0, 128);
+      sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rMAG: X: %.2f Y:%.2f Z:%.2f\n\r", acc_x, acc_y, acc_z, mag_x, mag_y, heading);
+      //sprintf((char*)buffer, "MAG: X: %.2f Y:%.2f Z:%.2f\n\r", mag_x, mag_y, heading);
+      UART2_SendString((char*)buffer);
+    }
     HAL_Delay(200);
     #endif
 

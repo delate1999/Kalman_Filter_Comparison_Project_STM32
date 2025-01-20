@@ -39,7 +39,7 @@
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 72,
+				"line" : 77,
 				"parent" : 0
 			},
 			{
@@ -136,7 +136,12 @@
 				25,
 				26,
 				27,
-				28
+				28,
+				29,
+				30,
+				31,
+				32,
+				33
 			]
 		},
 		{
@@ -187,7 +192,7 @@
 			"language" : "ASM",
 			"sourceIndexes" : 
 			[
-				29
+				34
 			]
 		}
 	],
@@ -253,14 +258,19 @@
 				25,
 				26,
 				27,
-				28
+				28,
+				29,
+				30,
+				31,
+				32,
+				33
 			]
 		},
 		{
 			"name" : "",
 			"sourceIndexes" : 
 			[
-				29
+				34
 			]
 		}
 	],
@@ -288,6 +298,36 @@
 			"backtrace" : 4,
 			"compileGroupIndex" : 0,
 			"path" : "Core/Src/data_imu.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/MPU9250-DMP.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/stm32_mpu9250_clk.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/stm32_mpu9250_i2c.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/inv_mpu.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"compileGroupIndex" : 0,
+			"path" : "Core/Src/inv_mpu_dmp_motion_driver.c",
 			"sourceGroupIndex" : 0
 		},
 		{
