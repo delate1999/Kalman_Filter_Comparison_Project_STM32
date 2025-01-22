@@ -15,7 +15,7 @@
   *
   ******************************************************************************
   */ 
- #define IMU
+ #define EKF_1
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -32,6 +32,10 @@
 
 #ifdef GPS
 #include "gps_neo6.h"
+#endif
+
+#ifdef EKF_1
+#include "ekf_1.h"
 #endif
 
 #include "data_gps.h"
@@ -58,11 +62,15 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+#ifdef TEST
+uint8_t buffer[128];
+#endif
+
 #ifdef IMU 
 float acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
-//float ax, ay, az, gx, gy, gz, temperature, roll, pitch;
 float mag_x, mag_y, mag_z;
 uint8_t buffer[128];
+float magnetic_declination = 6.83;
 #endif
 
 #ifdef GPS
@@ -152,10 +160,15 @@ int main(void)
       acc_x = MPU9250_calcAccel(ax);
       acc_y = MPU9250_calcAccel(ay);
       acc_z = MPU9250_calcAccel(az);
+      gyr_x = MPU9250_calcGyro(gx);
+      gyr_y = MPU9250_calcGyro(gy);
+      gyr_z = MPU9250_calcGyro(gz);
       heading = MPU9250_computeCompassHeading();
+      heading += magnetic_declination;
+      if (heading > 360.0) heading -= 360.0;
+      else if (heading < 0.0) heading += 360.0;
       memset(buffer, 0, 128);
-      sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rMAG: X: %.2f Y:%.2f Z:%.2f\n\r", acc_x, acc_y, acc_z, mag_x, mag_y, heading);
-      //sprintf((char*)buffer, "MAG: X: %.2f Y:%.2f Z:%.2f\n\r", mag_x, mag_y, heading);
+      sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rGYR: X: %.2f Y:%.2f Z:%.2f \n\rHED: %.2f\n\r", acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z, heading);
       UART2_SendString((char*)buffer);
     }
     HAL_Delay(200);
@@ -209,6 +222,44 @@ int main(void)
 
 		  Timer = HAL_GetTick();
 	  }
+    #endif
+
+    #ifdef TEST
+    /*
+    float delta_t_GPS = 1.0;
+    float delta_t_IMU = 0.01;
+    float x_old = data_gps[0][0]; 
+    float v_old = 0.0; 
+    float phi_old = 278.55380 * 3.14159265 / 180.0;
+    float Q = 100;
+    float P = 0;
+    float R = 9; 
+
+    float x_predicted, v_predicted, x_kalman, K;
+    uint16_t index = 0; 
+    for(uint16_t k = 0; k < 4; k++){
+      for(uint16_t i = 0; i < 100; i++){
+        x_predicted = x_old +  v_old*delta_t_IMU + 0.5*delta_t_IMU*delta_t_IMU*data_imu[index][3];
+        v_predicted = v_old + delta_t_IMU*data_imu[index][3];
+        x_old = x_predicted;
+        v_old = v_predicted;
+        index++;
+      }
+      P = P + Q;
+      K = P*(1/(P + R));
+      x_kalman = x_predicted + K * (data_gps[k][0] - x_predicted);
+      P = (1 - K)/P;
+
+      memset(buffer, 0, 128);
+      sprintf((char*)buffer, "INS: %.4f   GPS: %.4f   KAL: %.4f\n\r", x_predicted, data_gps[k][0], x_kalman);
+      UART2_SendString((char*)buffer);
+    }
+    memset(buffer, 0, 128);
+    */
+    #endif
+
+    #ifdef EKF_1
+    run_ekf_1();
     #endif
     /* USER CODE END WHILE */
 
@@ -264,7 +315,7 @@ void SystemClock_Config(void)
   }
 }
 
-#ifdef GPS
+#if defined GPS
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {

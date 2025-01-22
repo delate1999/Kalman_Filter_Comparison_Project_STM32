@@ -2,6 +2,7 @@
     "files.associations": {
         "compare": "c",
         "string.h": "c",
-        "mpu9250-dmp.h": "c"
+        "mpu9250-dmp.h": "c",
+        "typeinfo": "cpp"
     }
 }

@@ -61,6 +61,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     "Core/Src/stm32_mpu9250_i2c.c"
     "Core/Src/inv_mpu.c"
     "Core/Src/inv_mpu_dmp_motion_driver.c"
+    "Core/Src/eekf_mat.c"
+    "Core/Src/eekf.c"
+    "Core/Src/ekf_1.c"
 )
 
 # Add include paths
