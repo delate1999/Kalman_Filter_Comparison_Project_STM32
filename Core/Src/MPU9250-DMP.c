@@ -597,18 +597,18 @@ inv_error_t MPU9250_dmpSetPedometerTime(unsigned long time_inside)
 	return dmp_set_pedometer_walk_time(time_inside);
 }
 
-float MPU9250_calcAccel(int axis)
+float MPU9250_calcAccel(int axis, float offset)
 {
 	if (_aSense != 0)
-		return (float)axis / (float)_aSense;
+		return ((float)axis / (float)_aSense) - offset;
 	else
 		return 0;
 }
 
-float MPU9250_calcGyro(int axis)
+float MPU9250_calcGyro(int axis, float offset)
 {
 	if (_gSense != 0)
-		return (float)axis / (float)_gSense;
+		return ((float)axis / (float)_gSense) - offset;
 	else
 		return 0;
 }

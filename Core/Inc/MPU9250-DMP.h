@@ -336,9 +336,9 @@ inv_error_t MPU9250_dmpSetAccelBias(long* bias);
 inv_error_t MPU9250_lowPowerAccel(unsigned short rate);
 
 // calcAccel -- Convert 16-bit signed acceleration value to g's
-float MPU9250_calcAccel(int axis);
+float MPU9250_calcAccel(int axis, float offset);
 // calcGyro -- Convert 16-bit signed gyroscope value to degree's per second
-float MPU9250_calcGyro(int axis);
+float MPU9250_calcGyro(int axis, float offset);
 // calcMag -- Convert 16-bit signed magnetometer value to microtesla (uT)
 float MPU9250_calcMag(int axis);
 // calcQuat -- Convert Q30-format quaternion to a vector between +/- 1

@@ -3,6 +3,10 @@
         "compare": "c",
         "string.h": "c",
         "mpu9250-dmp.h": "c",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "numbers": "c",
+        "cmath": "c",
+        "complex": "c",
+        "gps_neo6.h": "c"
     }
 }

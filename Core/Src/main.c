@@ -71,6 +71,9 @@ float acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
 float mag_x, mag_y, mag_z;
 uint8_t buffer[128];
 float magnetic_declination = 6.83;
+float acc_x_bias = 0.1049847826;  /* g unit*/
+float acc_y_bias = 0.02335797101; /* g unit*/
+float gyr_z_bias = -0.8611884058; /* g unit*/
 #endif
 
 #ifdef GPS
@@ -157,18 +160,18 @@ int main(void)
       MPU9250_updateCompass();
       MPU9250_updateAccel();
       MPU9250_updateGyro();
-      acc_x = MPU9250_calcAccel(ax);
-      acc_y = MPU9250_calcAccel(ay);
-      acc_z = MPU9250_calcAccel(az);
-      gyr_x = MPU9250_calcGyro(gx);
-      gyr_y = MPU9250_calcGyro(gy);
-      gyr_z = MPU9250_calcGyro(gz);
+      acc_x = MPU9250_calcAccel(ax, acc_x_bias);
+      acc_y = MPU9250_calcAccel(ay, acc_y_bias);
+      acc_z = MPU9250_calcAccel(az, 0.0);
+      gyr_x = MPU9250_calcGyro(gx, 0.0);
+      gyr_y = MPU9250_calcGyro(gy, 0.0);
+      gyr_z = MPU9250_calcGyro(gz, gyr_z_bias);
       heading = MPU9250_computeCompassHeading();
       heading += magnetic_declination;
       if (heading > 360.0) heading -= 360.0;
       else if (heading < 0.0) heading += 360.0;
       memset(buffer, 0, 128);
-      sprintf((char*)buffer, "ACC: X: %.2f Y:%.2f Z:%.2f \n\rGYR: X: %.2f Y:%.2f Z:%.2f \n\rHED: %.2f\n\r", acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z, heading);
+      sprintf((char*)buffer, "%.4f,%.4f,%.4f\n\r", acc_x, acc_y, gyr_z);
       UART2_SendString((char*)buffer);
     }
     HAL_Delay(200);
