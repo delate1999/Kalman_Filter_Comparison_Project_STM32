@@ -15,7 +15,10 @@
   *
   ******************************************************************************
   */ 
- #define EKF_1
+
+#define G       9.8123
+#define UKF_1
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -34,14 +37,28 @@
 #include "gps_neo6.h"
 #endif
 
+#ifdef KF_1
+#include "kf_1.h"
+#endif
+
 #ifdef EKF_1
 #include "ekf_1.h"
+#endif
+
+#ifdef EKF_2
+#include "ekf_2.h"
+#endif
+
+#ifdef UKF_1
+#include "ukf_1.h"
 #endif
 
 #include "data_gps.h"
 #include "data_imu.h"
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,9 +88,11 @@ float acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z;
 float mag_x, mag_y, mag_z;
 uint8_t buffer[128];
 float magnetic_declination = 6.83;
-float acc_x_bias = 0.1049847826;  /* g unit*/
-float acc_y_bias = 0.02335797101; /* g unit*/
-float gyr_z_bias = -0.8611884058; /* g unit*/
+float acc_x_bias = 0.0999847826;  /* g unit*/
+float acc_y_bias = -0.02335797101; /* g unit*/
+float gyr_z_bias = -1.1061884058; 
+
+float dT_gyro = 0.01;
 #endif
 
 #ifdef GPS
@@ -134,10 +153,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   #ifdef IMU 
+  uint32_t index = 0;
   MPU9250_begin();
   MPU9250_setSensors(INV_XYZ_GYRO | INV_XYZ_ACCEL | INV_XYZ_COMPASS);
   //MPU6050_Init(&hi2c1);
   HAL_Delay(500);
+
+  float acc_N = 0.0;
+  float acc_E = 0.0;
+  float phi_degree = 0.0;  /* set at the begining */
   #endif
 
   #ifdef GPS
@@ -157,24 +181,42 @@ int main(void)
 	  //MPU6050_GetGyroscopeScaled(&gx, &gy, &gz);
     //AK8963_GetMagnetometerScaled(&mag_x, &mag_y, &mag_z);
     if(MPU9250_dataReady()){
+      index++;
       MPU9250_updateCompass();
       MPU9250_updateAccel();
       MPU9250_updateGyro();
-      acc_x = MPU9250_calcAccel(ax, acc_x_bias);
-      acc_y = MPU9250_calcAccel(ay, acc_y_bias);
+      acc_x = G * MPU9250_calcAccel(ax, acc_x_bias);
+      acc_y = (-1.0) * G * MPU9250_calcAccel(ay, acc_y_bias);
       acc_z = MPU9250_calcAccel(az, 0.0);
       gyr_x = MPU9250_calcGyro(gx, 0.0);
       gyr_y = MPU9250_calcGyro(gy, 0.0);
       gyr_z = MPU9250_calcGyro(gz, gyr_z_bias);
+      if(fabs(gyr_z) <= 0.2){
+        gyr_z = 0.0;
+      }
+      if(fabs(acc_x) <= 0.015 * G){
+          acc_x = 0.0;
+      }
+      if(fabs(acc_y) <= 0.015 * G){
+          acc_y = 0.0;
+      }
+      phi_degree -= gyr_z * dT_gyro;
+      if (phi_degree > 360.0) phi_degree -= 360.0;
+      else if (phi_degree < 0.0) phi_degree += 360.0;
+      //phi_degree = (phi_degree / 180.0) * PI;
+      acc_N = cos((phi_degree / 180.0) * PI) * acc_x - sin((phi_degree / 180.0) * PI) * acc_y;
+      acc_E = sin((phi_degree / 180.0) * PI) * acc_x + cos((phi_degree / 180.0) * PI) * acc_y;
       heading = MPU9250_computeCompassHeading();
       heading += magnetic_declination;
       if (heading > 360.0) heading -= 360.0;
       else if (heading < 0.0) heading += 360.0;
+      if(index>=50){
       memset(buffer, 0, 128);
-      sprintf((char*)buffer, "%.4f,%.4f,%.4f\n\r", acc_x, acc_y, gyr_z);
+      sprintf((char*)buffer, "%.4f,%.4f,%.4f, %.4f, %.4f, %.4f\n\r", acc_x, acc_y, gyr_z, acc_N, acc_E, phi_degree);
       UART2_SendString((char*)buffer);
+      index = 0;
+      }
     }
-    HAL_Delay(200);
     #endif
 
     #ifdef GPS
@@ -261,8 +303,20 @@ int main(void)
     */
     #endif
 
+    #ifdef KF_1
+    run_kf_1();
+    #endif
+
     #ifdef EKF_1
     run_ekf_1();
+    #endif
+
+    #ifdef EKF_2
+    run_ekf_2();
+    #endif
+
+    #ifdef UKF_1
+    run_ukf_1();
     #endif
     /* USER CODE END WHILE */
 

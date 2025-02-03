@@ -5,7 +5,7 @@ events:
     kind: "message-v1"
     backtrace:
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:228 (message)"
-      - "CMakeLists.txt:31 (enable_language)"
+      - "CMakeLists.txt:30 (enable_language)"
     message: |
       The target system is: Generic -  - arm
       The host system is: Windows - 10.0.26100 - AMD64
@@ -15,7 +15,7 @@ events:
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
-      - "CMakeLists.txt:31 (enable_language)"
+      - "CMakeLists.txt:30 (enable_language)"
     message: |
       Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
       Compiler: C:/ST/STM32CubeCLT_1.17.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe 
@@ -45,7 +45,7 @@ events:
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
-      - "CMakeLists.txt:31 (enable_language)"
+      - "CMakeLists.txt:30 (enable_language)"
     message: |
       Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
       Compiler: C:/ST/STM32CubeCLT_1.17.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe 
@@ -66,7 +66,7 @@ events:
     backtrace:
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1131 (message)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineASMCompiler.cmake:131 (CMAKE_DETERMINE_COMPILER_ID_VENDOR)"
-      - "CMakeLists.txt:31 (enable_language)"
+      - "CMakeLists.txt:30 (enable_language)"
     message: |
       Checking whether the ASM compiler is GNU using "--version" matched "(GNU assembler)|(GCC)|(Free Software Foundation)":
       arm-none-eabi-gcc.exe (GNU Tools for STM32 12.3.rel1.20240926-1715) 12.3.1 20230626
@@ -80,7 +80,7 @@ events:
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
-      - "CMakeLists.txt:34 (project)"
+      - "CMakeLists.txt:33 (project)"
     message: |
       Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
       Compiler: C:/ST/STM32CubeCLT_1.17.0/GNU-tools-for-STM32/bin/arm-none-eabi-g++.exe 
@@ -110,7 +110,7 @@ events:
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
       - "C:/ST/STM32CubeCLT_1.17.0/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
-      - "CMakeLists.txt:34 (project)"
+      - "CMakeLists.txt:33 (project)"
     message: |
       Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
       Compiler: C:/ST/STM32CubeCLT_1.17.0/GNU-tools-for-STM32/bin/arm-none-eabi-g++.exe 

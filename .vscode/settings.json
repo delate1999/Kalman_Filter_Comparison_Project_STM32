@@ -7,6 +7,12 @@
         "numbers": "c",
         "cmath": "c",
         "complex": "c",
-        "gps_neo6.h": "c"
+        "gps_neo6.h": "c",
+        "stdio.h": "c",
+        "data_imu.h": "c",
+        "data_gps.h": "c",
+        "ekf_1.h": "c",
+        "kf_1.h": "c",
+        "random": "c"
     }
 }

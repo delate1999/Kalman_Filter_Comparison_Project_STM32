@@ -41,7 +41,7 @@
 #define EEKF_MAT_RAND_MAX RAND_MAX
 
 /// matrix value type
-typedef double eekf_value;
+typedef float eekf_value;
 
 /// base matrix structure type
 typedef struct {

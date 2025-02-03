@@ -12,7 +12,6 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
-
 # Define the build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
@@ -63,7 +62,12 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     "Core/Src/inv_mpu_dmp_motion_driver.c"
     "Core/Src/eekf_mat.c"
     "Core/Src/eekf.c"
+    "Core/Src/kf_1.c"
     "Core/Src/ekf_1.c"
+    "Core/Src/ekf_2.c"
+    "Core/Src/yafl_math.c"
+    "Core/Src/yafl.c"
+    "Core/Src/ukf_1.c"
 )
 
 # Add include paths
