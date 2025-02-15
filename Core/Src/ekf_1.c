@@ -21,7 +21,7 @@
 /*==============*/
 /* Debug switch */
 /*==============*/
-#define TEST_DATA
+#define SENSOR_DATA
 
 eekf_value dT_GPS_ekf_1 = 1;
 
@@ -49,8 +49,7 @@ void UART2_SendString_ekf_1(char* s)
 eekf_return transition_ekf_1(eekf_mat* xp, eekf_mat* Jf, eekf_mat const *x,
         eekf_mat const *u, void* userData)
 {
-	// EEKF_DECL_MAT_INIT(xu, 4, 1, 0);
-	// EEKF_DECL_MAT_INIT(B, 4, 2, 0,0,0,0,0,0,0,0);
+
 	
     eekf_value x_N = *EEKF_MAT_EL(*x, 0, 0);
     eekf_value y_N = *EEKF_MAT_EL(*x, 1, 0);
@@ -105,15 +104,6 @@ eekf_return transition_ekf_1(eekf_mat* xp, eekf_mat* Jf, eekf_mat const *x,
     *EEKF_MAT_EL(*Jf, 3, 5) = 0;
     *EEKF_MAT_EL(*Jf, 4, 5) = dT_ekf_1;
     *EEKF_MAT_EL(*Jf, 5, 5) = 1;
-
-	// *EEKF_MAT_EL(B, 0, 0) = dT * dT / 2;
-	// *EEKF_MAT_EL(B, 1, 0) = 0;
-    // *EEKF_MAT_EL(B, 2, 0) = dT;
-	// *EEKF_MAT_EL(B, 3, 0) = 0;
-    // *EEKF_MAT_EL(B, 0, 1) = 0;
-	// *EEKF_MAT_EL(B, 1, 1) = dT * dT / 2;
-    // *EEKF_MAT_EL(B, 2, 1) = 0;
-	// *EEKF_MAT_EL(B, 3, 1) = dT;
 	
     *EEKF_MAT_EL(*xp, 0, 0) = x_N + v * dT_ekf_1 * cos((phi_degree / 180.0) * PI) + 0.5 * dT_ekf_1 * dT_ekf_1 * a * cos((phi_degree / 180.0) * PI);
     *EEKF_MAT_EL(*xp, 1, 0) = y_N + v * dT_ekf_1 * sin((phi_degree / 180.0) * PI) + 0.5 * dT_ekf_1 * dT_ekf_1 * a * sin((phi_degree / 180.0) * PI);
@@ -121,13 +111,6 @@ eekf_return transition_ekf_1(eekf_mat* xp, eekf_mat* Jf, eekf_mat const *x,
     *EEKF_MAT_EL(*xp, 3, 0) = omega;
     *EEKF_MAT_EL(*xp, 4, 0) = v + a * dT_ekf_1;
     *EEKF_MAT_EL(*xp, 5, 0) = a;
-
-    // predict state from current state
-    // if (NULL == eekf_mat_add(xp, eekf_mat_mul(xp, Jf, x), eekf_mat_mul(&xu, &B, u)))
-    // {
-	// 	printf("arg\n");
-    //     return eEekfReturnComputationFailed;
-    // }
 		
     return eEekfReturnOk;
 }
@@ -135,12 +118,6 @@ eekf_return transition_ekf_1(eekf_mat* xp, eekf_mat* Jf, eekf_mat const *x,
 eekf_return measurement_ekf_1(eekf_mat* zp, eekf_mat* Jh, eekf_mat const *x,
         void* userData)
 {
-    /* Ver. 1 */
-    // the Jacobian of measurement() at x
-    // *EEKF_MAT_EL(*Jh, 0, 0) = 1;
-    // *EEKF_MAT_EL(*Jh, 1, 0) = 0;
-    // *EEKF_MAT_EL(*Jh, 0, 1) = 0;
-    // *EEKF_MAT_EL(*Jh, 1, 1) = 1;
 
     // the Jacobian of measurement() at x
     *EEKF_MAT_EL(*Jh, 0, 0) = 1;
@@ -209,20 +186,6 @@ void run_ekf_1(void){
     // input and process noise variables            
     EEKF_DECL_MAT_INIT(u, 2, 1, 0, 0);
 
-/*
-    EEKF_DECL_MAT_INIT(Q, 4, 4, 
-		pow(s_w, 2) * pow(dT, 4) / 4, 0, pow(s_w, 2) * pow(dT, 3) / 2, 0,
-		0,  pow(s_w, 2) * pow(dT, 4) / 4, 0, pow(s_w, 2) * pow(dT, 3) / 2,
-        pow(s_w, 2) * pow(dT, 3) / 2, 0, pow(s_w, 2) * pow(dT, 2), 0,
-        0, 0, 0, pow(s_w, 2) * pow(dT, 2));
-*/
-
-    // EEKF_DECL_MAT_INIT(Q, 4, 4, 
-	// 	pow(std_dev_acc_x, 2) * pow(dT, 2), 0, 0, 0,
-	// 	0, pow(std_dev_acc_y, 2) * pow(dT, 2), 0, 0,
-    //     0, 0, pow(std_dev_acc_x, 2) * pow(dT, 2), 0,
-    //     0, 0, 0, pow(std_dev_acc_y, 2) * pow(dT, 2));
-
     EEKF_DECL_MAT_INIT(Q, 6, 6, 
 		pow(std_dev_acc_x, 2) * pow(dT_ekf_1, 2), 0, 0, 0, 0, 0,
 		0, pow(std_dev_acc_x, 2) * pow(dT_ekf_1, 2), 0, 0, 0, 0,
@@ -283,19 +246,14 @@ void run_ekf_1(void){
         for(uint16_t k = 0; k < DURATION_IN_SEC; k++){
             for(uint8_t i = 0; i < imu_sampling_rate_ekf_1; i++){
                 acc_x = data_imu[(imu_data_collected_frequency_ekf_1/imu_sampling_rate_ekf_1)*i + k*(imu_data_collected_frequency_ekf_1)][1] / dT_ekf_1;
-                //acc_y = data_imu[i + k*(imu_sampling_rate)][2];
-                //phi += data_imu[i + k*(imu_sampling_rate)][0] * (180.0/PI) * dT;
                 omega = data_imu[(imu_data_collected_frequency_ekf_1/imu_sampling_rate_ekf_1)*i + k*(imu_data_collected_frequency_ekf_1)][0] * (180.0/PI) / dT_ekf_1;
-                //if (phi > 360.0) phi -= 360.0;
-                //else if (phi < 0.0) phi += 360.0;
+
                 phi = *EEKF_MAT_EL(*ctx.x, 2, 0);
-                acc_N = cos((phi / 180.0) * PI) * acc_x;// - sin((phi / 180.0) * PI) * acc_y;
-                acc_E = sin((phi / 180.0) * PI) * acc_x;// + cos((phi / 180.0) * PI) * acc_y;
+                acc_N = cos((phi / 180.0) * PI) * acc_x;
+                acc_E = sin((phi / 180.0) * PI) * acc_x;
                 acc_N = acc_N / 111320.0;
                 acc_E = acc_E / (111320.0 * cos(*EEKF_MAT_EL(*ctx.x, 0, 0) * PI / 180.0));
                 acc_geographic = sqrt(acc_N * acc_N + acc_E * acc_E); 
-                //*EEKF_MAT_EL(u, 0, 0) = acc_N;
-                //*EEKF_MAT_EL(u, 1, 0) = acc_E;
                 *EEKF_MAT_EL(u, 0, 0) = acc_geographic;
                 *EEKF_MAT_EL(u, 1, 0) = omega;
                 uint32_t prediction_systick_timer_ms = HAL_GetTick();
@@ -323,24 +281,12 @@ void run_ekf_1(void){
             y_GPS = data_gps[k][1];
             uint32_t correction_systick_timer_ms = HAL_GetTick();
             correction_systick_timer = SysTick->VAL;
-            //if((k <= 54) || (k >= 59)){
-            eekf_correct(&ctx, &z, &R);
-            //}			
+            eekf_correct(&ctx, &z, &R);		
             correction_systick_timer = correction_systick_timer - SysTick->VAL + 84000*(HAL_GetTick()-correction_systick_timer_ms);
             
-            /*
             memset(buffer_ekf_1, 0, 256);
             sprintf((char*)buffer_ekf_1, "%.7f, %.7f, %.7f, %.7f, %ld\n", x_GPS, y_GPS, *EEKF_MAT_EL(*ctx.x, 0, 0), *EEKF_MAT_EL(*ctx.x, 1, 0), correction_systick_timer);
             UART2_SendString_ekf_1((char*)buffer_ekf_1);
-            */
-            /*            
-            memset(buffer_ekf_1, 0, 256);
-            sprintf((char*)buffer_ekf_1, "N: INS: %.6f   GPS: %.6f   KAL: %.6f   VEL: %.5f\n\r", x_predicted, data_gps[k][0], *EEKF_MAT_EL(*ctx.x, 0, 0), *EEKF_MAT_EL(*ctx.x, 4, 0));
-            UART2_SendString_ekf_1((char*)buffer_ekf_1);
-            memset(buffer_ekf_1, 0, 256);
-            sprintf((char*)buffer_ekf_1, "E: INS: %.6f   GPS: %.6f   KAL: %.6f   HEAD: %.5f\n\r", y_predicted, data_gps[k][1], *EEKF_MAT_EL(*ctx.x, 1, 0), *EEKF_MAT_EL(*ctx.x, 2, 0));
-            UART2_SendString_ekf_1((char*)buffer_ekf_1);
-            */
         }	
         
         memset(buffer_ekf_1, 0, 256);
@@ -366,10 +312,6 @@ void run_ekf_1(void){
             if(fabs(acc_y) <= 0.015 * G){
                 acc_y = 0.0;
             }
-            //phi_degree -= gyr_z * dT;
-            //if (phi_degree > 360.0) phi_degree -= 360.0;
-            //else if (phi_degree < 0.0) phi_degree += 360.0;
-            //phi_degree = (phi_degree / 180.0) * PI;
             phi_degree = *EEKF_MAT_EL(*ctx.x, 2, 0);
             acc_N = cos((phi_degree / 180.0) * PI) * acc_x;// - sin((phi_degree / 180.0) * PI) * acc_y;
             acc_E = sin((phi_degree / 180.0) * PI) * acc_x;// + cos((phi_degree / 180.0) * PI) * acc_y;
@@ -382,7 +324,6 @@ void run_ekf_1(void){
             eekf_predict(&ctx, &u, &Q);
             prediction_time = HAL_GetTick() - prediction_time;
 
-            /*
             if(uart_index >= UART_LOGGING_COUNTER){
                 memset(buffer_ekf_1, 0, 256);
                 sprintf((char*)buffer_ekf_1, "%.7f, %.7f, %.7f, %.7f\n", x_GPS, y_GPS, *EEKF_MAT_EL(*ctx.x, 0, 0), *EEKF_MAT_EL(*ctx.x, 1, 0));
@@ -390,7 +331,6 @@ void run_ekf_1(void){
                 uart_index = 0;
             }
             uart_index++;
-            */
             
         } 
 
@@ -414,15 +354,6 @@ void run_ekf_1(void){
                 correction_time = 0.0;
             }
             Timer_ekf_1 = HAL_GetTick();
-
-            /*
-            memset(buffer_ekf_1, 0, 256);
-            sprintf((char*)buffer_ekf_1, "N: INS: %.6f   GPS: %.6f   KAL: %.6f   VEL_N: %.5f  ACC_X: %.5f   ACC_N: %.5f   HEAD: %.2f\n\r", x_predicted, x_GPS, *EEKF_MAT_EL(*ctx.x, 0, 0), *EEKF_MAT_EL(*ctx.x, 2, 0), acc_x, acc_N, phi_degree);
-            UART2_SendString_ekf_1((char*)buffer_ekf_1);
-            memset(buffer_ekf_1, 0, 256);
-            sprintf((char*)buffer_ekf_1, "E: INS: %.6f   GPS: %.6f   KAL: %.6f   VEL_E: %.5f  ACC_Y: %.5f   ACC_E: %.5f\n\r", y_predicted, y_GPS, *EEKF_MAT_EL(*ctx.x, 1, 0), *EEKF_MAT_EL(*ctx.x, 3, 0), acc_y, acc_E);
-            UART2_SendString_ekf_1((char*)buffer_ekf_1);
-            */
             
         }
 
@@ -435,14 +366,5 @@ void run_ekf_1(void){
     }
 }
 
-/*
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(huart == GpsState.neo6_huart)
-	{
-		NEO6_ReceiveUartChar(&GpsState);
-	}
-}
-*/
 
 

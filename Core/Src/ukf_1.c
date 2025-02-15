@@ -125,19 +125,13 @@ typedef struct {
 #define DX_bias (1e-14)
 #define DZ (0.000025)
 
-// #define DP (0.00000025)
-// #define DX_acc (0.0000025)
-// #define DX_gyro (0.00009)
-// #define DX_bias (1e-9)
-// #define DZ (0.0025)
-
 myUKFMemorySt ukf_memory =
 {
     /*Initial state vector*/
     .x = {
         [0] = 52.3252947,
         [1] = 20.9393912,
-        [2] = 245.0,   /* Biedronka, Nowodwory */
+        [2] = 245.0,   
         [3] = 0.,
         [4] = 0.,
         [5] = 0.0999847826 * G,
@@ -215,22 +209,22 @@ void run_ukf_1(void){
     HAL_Delay(500);
     uint32_t Timer_ukf_1 = HAL_GetTick();
 
-    // while(1){
-    //     NEO6_Task(&GpsState);
-    //     if((HAL_GetTick() - Timer_ukf_1) > 1000){
-    //         if(NEO6_IsFix(&GpsState)){
-    //             int x_GPS_int = GpsState.Latitude / 100.0;
-    //             int y_GPS_int = GpsState.Longitude / 100.0;
-    //             x_GPS = x_GPS_int + (GpsState.Latitude - x_GPS_int*100)/60.0;
-    //             y_GPS = y_GPS_int + (GpsState.Longitude - y_GPS_int*100)/60.0; 
-    //             Timer_ukf_1 = HAL_GetTick();
-    //             break;
-    //         }
-    //         Timer_ukf_1 = HAL_GetTick();
-    //     }
-    // }
-    // kf.base.base.x[0] = x_GPS;
-    // kf.base.base.x[1] = y_GPS;
+    while(1){
+        NEO6_Task(&GpsState);
+        if((HAL_GetTick() - Timer_ukf_1) > 1000){
+            if(NEO6_IsFix(&GpsState)){
+                int x_GPS_int = GpsState.Latitude / 100.0;
+                int y_GPS_int = GpsState.Longitude / 100.0;
+                x_GPS = x_GPS_int + (GpsState.Latitude - x_GPS_int*100)/60.0;
+                y_GPS = y_GPS_int + (GpsState.Longitude - y_GPS_int*100)/60.0; 
+                Timer_ukf_1 = HAL_GetTick();
+                break;
+            }
+            Timer_ukf_1 = HAL_GetTick();
+        }
+    }
+    kf.base.base.x[0] = x_GPS;
+    kf.base.base.x[1] = y_GPS;
 
     status = yafl_ukf_post_init(&kf.base);
 
@@ -242,7 +236,7 @@ void run_ukf_1(void){
             current_acc_y_measured = (-1.0) * G * MPU9250_calcAccel(ay,  0.);
             current_omega_measured = (-1.0) * MPU9250_calcGyro(gz,  0.);
 
-            /*
+            
             if(uart_index_ukf_1 >= UART_LOGGING_COUNTER){
                 memset(buffer_ukf_1, 0, 256);
                 sprintf((char*)buffer_ukf_1, "%.7f, %.7f, %.7f, %.7f, %ld\n", x_GPS, y_GPS, kf.base.base.x[0], kf.base.base.x[1], prediction_systick_timer);
@@ -250,7 +244,7 @@ void run_ukf_1(void){
                 uart_index_ukf_1 = 0; 
             }
             uart_index_ukf_1++;
-            */
+            
             
             /* This is Bierman filter predict step */
             uint32_t prediction_systick_timer_ms = HAL_GetTick();
@@ -261,7 +255,7 @@ void run_ukf_1(void){
 
         NEO6_Task(&GpsState);
         if((HAL_GetTick() - Timer_ukf_1) > 1000){
-        //    if(NEO6_IsFix(&GpsState)){
+            if(NEO6_IsFix(&GpsState)){
                 int x_GPS_int = GpsState.Latitude / 100.0;
                 int y_GPS_int = GpsState.Longitude / 100.0;
                 x_GPS = x_GPS_int + (GpsState.Latitude - x_GPS_int*100)/60.0;
@@ -283,29 +277,17 @@ void run_ukf_1(void){
                 correction_systick_timer = SysTick->VAL;
                 status = yafl_ukf_update(&kf.base, &z[0]);
                 correction_systick_timer = correction_systick_timer - SysTick->VAL + 84000*(HAL_GetTick()-correction_systick_timer_ms);
-            // }
-            // else{
-            //    x_GPS = 0.0;
-            //    y_GPS = 0.0;
-            // }
+            }
+            else{
+               x_GPS = 0.0;
+               y_GPS = 0.0;
+            }
             Timer_ukf_1 = HAL_GetTick();
 
-            /*
-            memset(buffer_ukf_1, 0, 256);
-            sprintf((char*)buffer_ukf_1, "N: GPS: %.6f   KAL: %.6f   VEL_N: %.5f  HEAD: %.2f\n\r", x_GPS, kf.base.base.x[0], kf.base.base.x[3], kf.base.base.x[2]);
-            UART2_SendString_ukf_1((char*)buffer_ukf_1);
-            memset(buffer_ukf_1, 0, 256);
-            sprintf((char*)buffer_ukf_1, "E: GPS: %.6f   KAL: %.6f   VEL_E: %.5f\n\r", y_GPS, kf.base.base.x[1], kf.base.base.x[4]);
-            UART2_SendString_ukf_1((char*)buffer_ukf_1);
-            */
             memset(buffer_ukf_1, 0, 256);
             sprintf((char*)buffer_ukf_1, "%.7f, %.7f, %.7f, %.7f, %ld\n", data_gps[gps_data_index][0], data_gps[gps_data_index][1], kf.base.base.x[0], kf.base.base.x[1], correction_systick_timer);
             UART2_SendString_ukf_1((char*)buffer_ukf_1);
         }
         
     }
-
-    // memset(buffer_ukf_1, 0, 256);
-    // sprintf((char*)buffer_ukf_1, "==============\n\r");
-    // UART2_SendString_ukf_1((char*)buffer_ukf_1);
 }

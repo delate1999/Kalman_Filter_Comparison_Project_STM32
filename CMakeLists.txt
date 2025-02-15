@@ -51,7 +51,6 @@ target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    "Core/Src/mpu6050.c"
     "Core/Src/gps_neo6.c"
     "Core/Src/data_gps.c"
     "Core/Src/data_imu.c"

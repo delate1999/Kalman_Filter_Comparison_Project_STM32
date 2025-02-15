@@ -386,11 +386,3 @@ void run_kf_1(void){
 }
 
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(huart == GpsState.neo6_huart)
-	{
-		NEO6_ReceiveUartChar(&GpsState);
-	}
-}
-

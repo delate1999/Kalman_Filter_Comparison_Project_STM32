@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
+#include "gps_neo6.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -187,5 +188,11 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == GpsState.neo6_huart)
+	{
+		NEO6_ReceiveUartChar(&GpsState);
+	}
+}
 /* USER CODE END 1 */

@@ -7,7 +7,7 @@ Kalman Filter implementations comparison on ARM MCU.
 Project compares KF, EKF and UKF in 2D position estimation in GPS/INS integration. Sensors MPU9250 and NEO-7M were used, converted data from 
 awesome-gins-datasets were also included to work without sensors. 
 
-## Getting Started
+In _papers_ folder there is thesis which used this repository. The paper might better explain usage and concept behind repository.
 
 ### Dependencies
 
